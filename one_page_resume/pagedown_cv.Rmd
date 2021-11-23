@@ -1,0 +1,208 @@
+---
+title: "Tinashe Tapera's resume"
+author: Tinashe M. Tapera
+date: "`r Sys.Date()`"
+output:
+  pagedown::html_resume:
+    # set it to true for a self-contained HTML page but it'll take longer to render
+    self_contained: false
+# uncomment this line to produce HTML and PDF in RStudio:
+#knit: pagedown::chrome_print
+---
+
+Aside
+================================================================================
+
+
+![Tinashe M. Tapera](avatar.png){width=80%}
+
+
+Contact Info {#contact}
+--------------------------------------------------------------------------------
+
+- <i class="fa fa-envelope"></i> tinashemtapera@gmail.com
+- <i class="fa fa-github"></i> [github.com/TinasheMTapera](https://github.com/TinasheMTapera)
+- <i class="fa fa-phone"></i> +1 267-441-7206
+- <i class="fa fa-twitter"></i> [\@TaperaTinashe](https://twitter.com/TaperaTinashe)
+- For more information, please contact me via email.
+
+
+Skills {#skills}
+--------------------------------------------------------------------------------
+
+- Statistical analysis 
+
+- Machine learning
+
+- Data mining
+
+- Software engineering
+
+- Favourite languages:
+
+-- R 
+
+-- Python
+
+-- Bash
+
+
+Disclaimer {#disclaimer}
+--------------------------------------------------------------------------------
+
+This resume was made with the R package [**pagedown**](https://github.com/rstudio/pagedown).
+
+Last updated on `r Sys.Date()`.
+
+
+
+Main
+================================================================================
+
+Tinashe M. Tapera {#title}
+--------------------------------------------------------------------------------
+
+### Summary
+
+Data Scientist with a focus on quantitative data analysis and computational techniques for psychology and neuroscience research. My mission is to study, understand, and predict human behaviour using advanced computational, data mining, and machine learning tools. Expert R and proficient python programmer, with significant experience in a wide range of domains from clinical psychology/neuroscience, to  people analytics, and industrial/organizational psychology.
+
+
+Education {data-icon=graduation-cap data-concise=true}
+--------------------------------------------------------------------------------
+
+### Drexel University
+
+B.Sc. in Psychology
+
+Philadelphia, Pennsylvania
+
+2017
+
+Graduating GPA: 3.54
+
+### Drexel University
+
+Accelerated M.Sc. in Psychology
+
+Philadelphia, PA
+
+2018
+
+Thesis: Data Mining Models with Applications in Psychological Research
+
+
+Research Experience {data-icon=laptop}
+--------------------------------------------------------------------------------
+
+### Graduate Research Assistant
+
+Quantitative Psychology & Statistics Lab
+
+Drexel University
+
+2015 - 2018
+
+- Investigated advanced data mining and machine learning models for research in psychology, neuropsychology, and epidemiology.
+
+- Provided statistical analysis and software engineering support for projects such as:
+
+::: concise
+- Disordered eating prediction using smartphone-based ecological momentatry assessment data
+- Dietary pattern analysis to determine cardiovascular disease risk
+- Early identification of, and differentiation between, Autism and Down Syndrome in youth using diagnostic criterion data
+:::
+
+### SAMSI Fellow
+
+The Statistical and Applied Mathematical Sciences Institute
+
+Raleigh, NC
+
+2016
+
+- Awarded $900 travel award to participate in the Statistical and Mathematical Sciences Institute Interdisciplinary Undergraduate Workshop 2016.
+
+- Worked with a team of multidisciplinary students to predict multiple sclerosis diagnosis in R, with 81% classification accuracy.
+
+### Research Assistant
+
+Laboratory for Innovations in Health-Related Behavior Change
+
+Drexel University
+
+2015
+
+- Collected and cleaned sensitive participant clinical data in a study assessing dietary adherence using a companion smartphone app.
+- Independently investigated hypotheses on self-report and baseline measurement discrepancies in SPSS.
+  
+
+Professional Experience {data-icon=suitcase}
+--------------------------------------------------------------------------------
+
+### Senior Data Analyst, Neuroimaging
+
+Penn Lifespan Informatics & Neuroimaging Center
+
+University of Pennsylvania
+
+2018 - present
+
+- Use programming tools and technologies to curate, analyse, and present brain imaging
+data.
+- Develop data pipelines for ETL (extract-transform-load) of large-scale imaging data sets
+between data warehouses in Python, R, and Bash.
+- Preprocess and analyse neuroimaging data using cutting edge software (fMRIprep,
+XCPengine, QSIPrep, ASLPrep).
+- Develop and actively maintain multiple data curation software packages in Python and R.
+- Published first author in *Frontiers in Neuroinformatics*.
+
+### Data Scientist, People Analytics Intern
+
+Salesforce
+
+San Francisco, CA
+
+2017
+
+- Focused on discovery of organizational insight using internal human resources data sets.
+
+- Developed a semi-supervised learning algorithm for tracking employee performance by
+matching topic models in ongoing feedback data and goal-setting data.
+
+- Investigated comorbidity of employees’ insurance claims data to dynamically classify claim types and profile employees.
+
+
+Teaching Experience {data-icon=chalkboard-teacher}
+--------------------------------------------------------------------------------
+
+### Data Analysis for Psychology I-II
+
+Teaching Assistant of statistics sequence for psychology graduate students
+
+Drexel University
+
+2017 -2018
+
+
+Selected Publications and Posters {data-icon=file}
+--------------------------------------------------------------------------------
+
+### Genetic and epigenetic signals are found predictive to the distribution of intra-individual divergence of alternative splicing.
+
+Poster for 2013 International Conference of Genomics
+
+Qingdao, China
+
+2014
+
+**Yu L**, Chen B, Zhang Z.
+
+### ESCRT-0 complex modulates Rbf mutant cell survival by regulating Rhomboid endosomal trafficking and EGFR signaling.
+
+J Cell Sci. 2016 May 15;129(10):2075-84.
+
+N/A
+
+2016 
+
+Sheng Z, **Yu L**, Zhang T, Pei X, Li X, Zhang Z and Du W. 
