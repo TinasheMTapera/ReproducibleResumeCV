@@ -1,0 +1,2 @@
+^\.circleci$
+^\.circleci/config\.yml$
