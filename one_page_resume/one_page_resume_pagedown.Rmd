@@ -1,0 +1,260 @@
+---
+title: tinashemtapera_resume
+author: Tinashe M. Tapera
+date: "`r Sys.Date()`"
+output:
+  pagedown::html_resume:
+    # css: ['css/custom_resume.css', 'css/styles_html.css', 'resume']
+    css: ['css/custom_resume.css', 'css/styles_pdf.css', 'resume']
+    # set it to true for a self-contained HTML page but it'll take longer to render
+    self_contained: true
+params:
+  doctype: "PDF" # "PDF" or "HTML" is automatically updated in update_resume.R 
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  results='asis', 
+  echo = FALSE
+)
+
+#load packages
+library(tidyverse)
+library(googlesheets4)
+library(glue)
+library(here)
+library(rcrossref)
+
+read_subsheet <- function(subsh){
+  
+  sh <- Sys.getenv("cv_info")
+  read_sheet(sh, sheet = subsh)
+  
+}
+  
+fields <- c("jobs", "education", "software_n_projects", "skills", "untracked_pubs")
+
+all_data <- fields %>%
+  map(~read_subsheet(.)) %>%
+  set_names(fields)
+
+```
+
+Aside
+================================================================================
+
+<img src="avatar.png" alt="Author Image" class="img-circle text-center headshot">
+<!--![Tinashe M. Tapera](avatar.png){width=50% class="center"}-->
+
+Contact {#contact}
+--------------------------------------------------------------------------------
+
+```{r contactinfo}
+# Adjust contact info based on document type - html has link while pdf does not
+if(params$doctype == "HTML") {
+  glue::glue('
+    - <i class="fa fa-map-marked-alt"></i> Philadelphia, PA
+    - <i class="fa fa-phone"></i> <a href="tel:267-441-7206">(267) 441-7206</a>
+    - <i class="fa fa-envelope"></i> tinashemtapera\\@gmail.com
+    - <i class="fa fa-globe"></i> [tinashemtapera.com](https://www.tinashemtapera.com)
+    - <i class="fa fa-github"></i> [github.com/TinasheMTapera](https://github.com/TinasheMTapera)
+    - <i class="fab fa-linkedin-in"></i> [linkedin.com/TinasheMTapera](https://www.linkedin.com/in/TinasheMTapera/)
+    - <i class="fa fa-twitter"></i> [\\@TaperaTinashe](https://twitter.com/TaperaTinashe)
+  ')
+} 
+if(params$doctype == "PDF") {
+  glue::glue('
+    - <i class="fa fa-map-marked-alt"></i> Philadelphia, PA
+    - <i class="fa fa-phone"></i> 267-441-7206
+    - <i class="fa fa-envelope"></i> tinashemtapera\\@gmail.com
+    - <i class="fa fa-globe"></i> [tinashemtapera.com](https://www.tinashemtapera.com)
+    - <i class="fa fa-github"></i> [TinasheMTapera](https://github.com/TinasheMTapera)
+    - <i class="fab fa-linkedin-in"></i> [TinasheMTapera](https://www.linkedin.com/in/TinasheMTapera/)
+    - <i class="fa fa-twitter"></i> [\\@TaperaTinashe](https://twitter.com/TaperaTinashe)
+  ')
+}
+```
+
+
+
+```{r download}
+# if doctype is html add link to download a pdf version
+if(params$doctype == "HTML"){
+  cat("[<i class='fas fa-download'></i> Download as a PDF](https://github.com/TinasheMTapera/ReproducibleResumeCV/blob/main/markdown_cv/markdown_cv.pdf)")
+}
+```
+
+<br>
+
+
+Github Statistics {#stats}
+--------------------------------------------------------------------------------
+
+<!-- credit to https://github.com/anuraghazra/github-readme-stats -->
+
+[![Tinashe's GitHub stats](https://github-readme-stats.vercel.app/api?username=tinashemtapera&theme=prussian&?count_private=true&hide=javascript,html,css,Jupyter\ Notebook,OpenEdge\ ABL)](https://github.com/tinashemtapera)
+
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=tinashemtapera&theme=prussian&show_icons=true&hide=javascript,html,css,Jupyter\ Notebook,OpenEdge\ ABL)](https://github.com/tinashemtapera)
+
+
+```{r codingskills, dev.args = list(bg = 'transparent')}
+# function from helper_functions.R
+# build_skill_bars(skill_data, "Tech")
+```
+
+
+Disclaimer {#disclaimer}
+--------------------------------------------------------------------------------
+
+Made w/ [**pagedown**](https://github.com/rstudio/pagedown).   
+Source code: [**Github repo**](https://github.com/tinashemtapera/ReproducibleResumeCV).
+
+This resume was automatically generated with Continuous Integration
+
+[![CircleCI](https://circleci.com/gh/TinasheMTapera/ReproducibleResumeCV/tree/main.svg?style=svg)](https://circleci.com/gh/TinasheMTapera/ReproducibleResumeCV/tree/main)
+
+Last updated `r format(Sys.time(), '%d %B %Y')`
+<br>
+<br>
+
+
+Main
+================================================================================
+
+
+Tinashe Michael Tapera {#title}
+--------------------------------------------------------------------------------
+
+
+### Aspiring Graduate Student  |  Neuroimaging Data Analyst  
+
+
+--------------------------------------------------------------------------------
+
+Data Scientist with a focus on quantitative data analysis and computational techniques for psychology and neuroscience research. **My mission is to study behavioral and mental health** using **statistical and machine learning** applied to data collected from **wearable and mobile devices**. Proficient R and Python programmer, with significant professional and research experience in the domains of neuroimaging, clinical/behavioral psychology, and people analytics/IO psychology.
+
+
+--------------------------------------------------------------------------------
+
+Education {data-icon=graduation-cap}
+--------------------------------------------------------------------------------
+
+```{r education}
+all_data[['education']] %>%
+  fill(degree, uni, loc, start_date, end_date) %>%
+  nest(data = details) %>%
+  # mutate(detail_no = row_number()) %>%
+  # pivot_wider(names_from = detail_no, values_from = details) %>%
+  mutate(timeline = ifelse(
+        is.na(start_date) | start_date == end_date,
+        end,
+        glue('{format(end_date, "%b %Y")} - {format(start_date, "%b %Y")}')
+      )) %>%
+  glue_data(
+    "### {uni}",
+    "\n\n",
+    "{degree}",
+    "\n\n",
+    "{loc}",
+    "\n\n",
+    '{format(end_date, "%b %Y")}',
+    "\n\n",
+  )
+  
+```
+
+
+
+Professional Experience {data-icon=suitcase}
+--------------------------------------------------------------------------------
+
+```{r jobs}
+# print_section(position_data, 'work')
+all_data[['jobs']] %>%
+  fill(-tasks) %>%
+  mutate(timeline = ifelse(
+        is.na(end_date) | start_date == end_date,
+        glue('{format(start_date, "%b %Y")} - Present'),
+        glue('{format(end_date, "%b %Y")} - {format(start_date, "%b %Y")}')
+      )) %>%
+  mutate(tasks = as.character(glue("- {tasks}"))) %>%
+  group_by(role, company, where, timeline) %>%
+  mutate(task_num = paste0("task_", row_number())) %>%
+  pivot_wider(names_from = task_num, values_from = tasks) %>%
+  unite(col = bullets, contains("task_"), sep = "\n", na.rm = TRUE) %>%
+  
+  glue_data(
+      "### {role}",
+      "\n\n",
+      "{company}",
+      "\n\n",
+      "{where}",
+      "\n\n",
+      "{timeline}", 
+      "\n\n",
+      "{bullets}",
+      "\n\n\n",
+    )
+```
+
+Selected Publications {data-icon=book data-concise=true}
+--------------------------------------------------------------------------------
+
+```{r pubs, warning=FALSE}
+parse_csl_entry <- function(entry, max_len = 6, min_length = 4){
+  # these entries come out in a funny format; parse them into a single character vector
+  
+  entry %>%
+    mutate(first_initial = str_c(str_sub(first_name, 1,1), ".")) %>%
+    mutate(to_return = glue("{last_name}, {first_initial} {middle_name}", .na = "")) %>%
+    pull(to_return) %>%
+    str_trim() -> full_list
+  
+  # a bit of logic to shorten long entries
+  if(length(full_list) >= max_len){
+    index <- str_which(full_list, "Tapera")
+    if(index < min_length){
+      full_list <- c(full_list[1:min_length], "...", full_list[length(full_list)])
+    } else{
+      full_list <- c(full_list[1:index], "...", full_list[length(full_list)])
+    }
+  }
+  str_flatten(full_list, collapse = ", ")
+  
+}
+pubs_as_bibs <- all_data %>%
+  pluck("untracked_pubs") %>%
+  mutate(bib_text = cr_cn(doi, format = "bibtex"))
+
+pubs_df <- bib2df::bib2df(here("data", "allrefs.bib"), TRUE) %>%
+  select(TITLE, YEAR, AUTHOR, JOURNAL, URL) %>%
+  mutate(across(!c(AUTHOR, YEAR), ~ str_replace_all(.x, "\\{|\\}", ""))) %>% 
+  mutate(AUTHOR = map(AUTHOR, ~parse_csl_entry(.x))) %>%
+  unnest(AUTHOR) %>%
+  bind_cols(pubs_as_bibs) %>%
+  mutate(JOURNAL = ifelse(preprint == TRUE, "Under Review", JOURNAL))
+
+first <- pubs_df %>%
+  filter(str_detect(TITLE, "FlywheelTools"))
+
+pubs_df %>%
+  filter(!str_detect(TITLE, "FlywheelTools")) %>%
+  filter(!preprint) %>%
+  arrange(desc(YEAR)) %>%
+  slice(1:3) %>%
+  bind_rows(first, .) %>%
+  mutate(authorship = c("First Author", "Middle Author", "", "")) %>%
+  mutate(linked_title = glue("[{TITLE}]({URL})")) %>%
+  glue_data(
+    "### {linked_title}",
+    "\n\n",
+    "{JOURNAL}",
+    "\n\n",
+    "{YEAR}",
+    "\n\n",
+    "{authorship}",
+    "\n\n\n"
+    )
+```
+
