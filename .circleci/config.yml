@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: rocker/r-ver:4.1.0
+      - image: rocker/verse
     environment:
       R_LIBS: ~/R/Library
     steps:
@@ -16,9 +16,10 @@ jobs:
           command: |
             export DEBIAN_FRONTEND=noninteractive; apt-get -y update && apt-get install -y git-core
             mkdir -p ~/R/Library
-            Rscript -e 'install.packages("remotes")'
+            Rscript -e 'install.packages(c("remotes", "devtools"))'
             install2.r dplyr forcats ggplot2 glue googlesheets4 here purrr readr remotes shiny stringr tibble tidyr tidyverse todor gargle
-            installGithub.r ropensci/rcrossref@319f34c8e8cbb41c2cb06282e612b870f61b85cd
+            Rscript -e 'devtools::install_github("ropensci/rcrossref@319f34c8e8cbb41c2cb06282e612b870f61b85cd")'
+            #installGithub.r ropensci/rcrossref@319f34c8e8cbb41c2cb06282e612b870f61b85cd
       - run:
           name: Run prep
           command: |
