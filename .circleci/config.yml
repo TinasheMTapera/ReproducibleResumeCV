@@ -24,6 +24,7 @@ jobs:
           name: Run prep
           command: |
             Rscript - 'googlesheets4::gs4_auth("teetaps111@gmail.com")'
+            Rscript - 'rcrossref::cr_cn("10.3389/fninf.2021.678403")'
             echo RUNNING PREP SCRIPTS
       - run:
           name: Session information and installed package versions
