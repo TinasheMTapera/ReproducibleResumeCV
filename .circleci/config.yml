@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: rocker/verse:latest
+      - image: rocker/r-ver:4.1.0
     environment:
       R_LIBS: ~/R/Library
     steps:
@@ -14,9 +14,13 @@ jobs:
       - run:
           name: Install package dependencies
           command: |
+            export DEBIAN_FRONTEND=noninteractive; apt-get -y update && apt-get install -y git-core
             mkdir -p ~/R/Library
             Rscript -e 'install.packages("remotes")'
+            install2.r dplyr forcats ggplot2 glue googlesheets4 here purrr readr remotes shiny stringr tibble tidyr tidyverse todor
+            installGithub.r ropensci/rcrossref@319f34c8e8cbb41c2cb06282e612b870f61b85cd
 #            Rscript -e 'remotes::install_deps(dependencies = TRUE)'
+
       - run:
           name: Session information and installed package versions
           command: |

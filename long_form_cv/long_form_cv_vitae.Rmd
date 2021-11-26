@@ -1,0 +1,301 @@
+---
+title: CV
+name: Tinashe Michael
+surname: Tapera
+position: "Senior Neuroimaging Data Analyst"
+address: "Philadelphia, Pennsylvania"
+phone: +267 441 7206
+www: tinashemtapera.com
+email: "tinashemtapera@gmail.com"
+twitter: TaperaTinashe
+github: TinasheMTapera
+linkedin: TinasheMTapera
+date: "`r format(Sys.time(), '%B %Y')`"
+headcolor: "000000"
+aboutme: "I'm an aspiring graduate student seeking PhD opportunities at the intersection of passive sensing, mental health, and data science."
+output: 
+  vitae::awesomecv
+---
+<!-- major acknowledgement to https://github.com/seabbs/cv -->
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(vitae)
+library(googlesheets4)
+library(here)
+library(tidyverse)
+library(glue)
+library(lubridate)
+library(scholar)
+library(rcrossref)
+library(fs)
+```
+
+```{r get data, include=FALSE}
+
+read_subsheet <- function(subsh){
+  
+  sh <- Sys.getenv("cv_info")
+  read_sheet(sh, sheet = subsh)
+  
+}
+  
+fields <- c("jobs", "education", "untracked_pubs", "teaching", "service", "research", "software_n_projects", "skills")
+
+all_data <- fields %>%
+  map(~read_subsheet(.)) %>%
+  set_names(fields)
+
+all_data[['publications']] <- get_publications("9N6a5jsAAAAJ") %>% 
+  mutate(author = author %>% 
+           as.character %>%
+           str_trim(),
+         journal = journal %>% 
+           replace(journal %in% "bioRxiv", "BioRxiv"), 
+         first_author = case_when(
+           str_starts(author, "TM Tapera") ~ TRUE, TRUE ~ FALSE
+           ),
+         preprint = case_when(
+           str_detect(journal, "Rxiv") ~ TRUE, TRUE ~ FALSE)
+         ) %>% 
+  dplyr::arrange(desc(year))
+
+```
+
+```{r get pubs from doi}
+pubs_as_bibs <- all_data %>%
+  pluck("untracked_pubs") %>%
+  mutate(bib_text = cr_cn(doi, format = "bibtex"))
+
+if(!fs::dir_exists(here("data"))){
+  
+  fs::dir_create(here("data"))
+}
+
+#write to a permanent personal ref.bib
+write_lines(pubs_as_bibs$bib_text, here("data", "allrefs.bib"))
+
+parse_csl_entry <- function(entry, max_len = 6, min_length = 4){
+  # these entries come out in a funny format; parse them into a single character vector
+  
+  entry %>%
+    mutate(first_initial = str_c(str_sub(first_name, 1,1), ".")) %>%
+    mutate(to_return = glue("{last_name}, {first_initial} {middle_name}", .na = "")) %>%
+    pull(to_return) %>%
+    str_trim() -> full_list
+  
+  # a bit of logic to shorten long entries
+  if(length(full_list) >= max_len){
+    index <- str_which(full_list, "Tapera")
+    if(index < min_length){
+      full_list <- c(full_list[1:min_length], "...", full_list[length(full_list)])
+    } else{
+      full_list <- c(full_list[1:index], "...", full_list[length(full_list)])
+    }
+  }
+  str_flatten(full_list, collapse = ", ")
+  
+}
+
+pubs_df <- bib2df::bib2df(here("data", "allrefs.bib"), TRUE) %>%
+  select(TITLE, YEAR, AUTHOR, JOURNAL, URL) %>%
+  mutate(across(!c(AUTHOR, YEAR), ~ str_replace_all(.x, "\\{|\\}", ""))) %>% 
+  mutate(AUTHOR = map(AUTHOR, ~parse_csl_entry(.x))) %>%
+  unnest(AUTHOR) %>%
+  bind_cols(pubs_as_bibs) %>%
+  mutate(JOURNAL = ifelse(preprint == TRUE, "Under Review", JOURNAL))
+
+```
+
+```{r warn pubs missing}
+gschol_papers <- all_data %>%
+  pluck("publications") %>%
+  pull(title) %>%
+  str_trim() %>%
+  str_to_lower()
+
+pubs_papers <- pubs_df %>%
+  pull(TITLE) %>%
+  str_to_lower()
+
+contained <- function(sublist, superlist){
+  
+  missing <- c()
+  
+  while(length(sublist) > 0){
+    
+    if(!(sublist[1] %in% superlist)){
+      missing <- c(sublist[1], missing)
+    }
+    
+    sublist <- sublist[-1]
+    
+  }
+  
+  return(missing)
+  
+}
+
+not_in_sheet <- contained(gschol_papers, pubs_papers)
+
+message("The following papers were found on scholar but NOT in your DOIs:\n")
+message(paste0(not_in_sheet, collapse="\n\n"))
+```
+
+# Education 
+```{r}
+all_data %>%
+  pluck("education") %>%
+  fill(-details) %>%
+  mutate(
+    across(
+      contains("date"),
+      ~ str_c(
+        month(.x, label = TRUE), " ", year(.x)
+        )
+      )
+    ) %>%
+  detailed_entries(
+    when = glue("{start_date} — {end_date}"),
+    what = degree,
+    where = loc,
+    with = uni,
+    why = details
+  )
+```
+
+# Professional Experience
+
+```{r jobs}
+all_data %>%
+  pluck("jobs") %>%
+  fill(-tasks) %>%
+  mutate(across(contains("date"), 
+                ~ str_c(month(.x, label = TRUE),
+                        " ",
+                        year(.x))
+                )
+    ) %>%
+  mutate(end_date = replace_na(end_date, "Present")) %>%
+  
+  detailed_entries(
+    what = role,
+    when = glue("{start_date} — {end_date}"),
+    with = company,
+    where = where,
+    why = tasks)
+```
+
+# Research Experience
+
+```{r research}
+all_data %>%
+  pluck("research") %>%
+  mutate(when = ifelse(
+    !is.na(end_date), 
+    glue("{start_date} — {end_date}"),
+    start_date)) %>%
+  mutate(
+    PI = ifelse(!is.na(PI), glue("{lab} ({PI})"), NA)
+         ) %>%
+  fill(-details) %>%
+  detailed_entries(
+    what = project,
+    when = when,
+    with = PI,
+    where = location,
+    why = details
+  )
+```
+
+
+# Publications
+
+*First-author*
+
+```{r first author}
+pubs_df %>%
+  filter(str_starts(AUTHOR, "Tapera")) %>%
+  arrange(desc(YEAR)) %>%
+  detailed_entries(
+    what=AUTHOR, 
+    when=YEAR, 
+    with=TITLE, 
+    where=JOURNAL,
+    why = URL,
+    .protect = TRUE
+  )
+
+```
+
+*Middle-author*
+```{r mid author}
+pubs_df %>%  
+  filter(!str_starts(AUTHOR, "Tapera")) %>%
+  arrange(desc(YEAR)) %>%
+  detailed_entries(
+    what=AUTHOR, 
+    when=YEAR, 
+    with=TITLE, 
+    where=JOURNAL,
+    why = URL,
+    .protect = TRUE
+  )
+
+```
+
+# Software & Project Contributions
+
+```{r software}
+all_data %>%
+  pluck("software_n_projects") %>%
+  arrange(desc(year)) %>%
+  detailed_entries(
+    what=description, 
+    when=year, 
+    with=title, 
+    where=doi,
+    why = languages,
+    .protect = TRUE
+  )
+
+```
+
+
+# Teaching Experience
+
+*Teaching Assistant*
+```{r TAing}
+all_data %>%
+  pluck("teaching") %>%
+  #fill(-tasks) %>%
+  filter(role=="Teaching Assistant") %>%
+  brief_entries(
+    what=course,
+    when=when,
+    with=where
+  )
+```
+# Service
+```{r}
+all_data %>%
+  pluck("service") %>%
+  brief_entries(
+    what=what,
+    when=when,
+    with=where
+  )
+```
+
+
+# Skills
+
+```{r}
+all_data %>% 
+  pluck("skills") %>%
+  group_by(category) %>% 
+  mutate(skill = paste(skill, collapse = ", ")) %>% 
+  ungroup %>% 
+  unique() %>%
+  detailed_entries(what = skill, with = category)
+```
