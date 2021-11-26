@@ -17,10 +17,14 @@ jobs:
             export DEBIAN_FRONTEND=noninteractive; apt-get -y update && apt-get install -y git-core
             mkdir -p ~/R/Library
             Rscript -e 'install.packages("remotes")'
-            install2.r dplyr forcats ggplot2 glue googlesheets4 here purrr readr remotes shiny stringr tibble tidyr tidyverse todor
+            install2.r dplyr forcats ggplot2 glue googlesheets4 here purrr readr remotes shiny stringr tibble tidyr tidyverse todor gargle
             installGithub.r ropensci/rcrossref@319f34c8e8cbb41c2cb06282e612b870f61b85cd
 #            Rscript -e 'remotes::install_deps(dependencies = TRUE)'
-
+      - run:
+          name: Run prep
+          command: |
+            Rscript - 'googlesheets4::gs4_auth("teetaps111@gmail.com")'
+            echo RUNNING PREP SCRIPTS
       - run:
           name: Session information and installed package versions
           command: |
