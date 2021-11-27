@@ -43,7 +43,7 @@ jobs:
       - store_artifacts:
           path: /root/project/one_page_resume/tinashemtapera_resume.html
       - store_artifacts:
-          path: /root/project/long_form_cv/tinashemtapera_cv.html
+          path: /root/project/long_form_cv/tinashemtapera_cv.pdf
       - save_cache:
           key: r-pkg-cache-{{ arch }}-{{ .Branch }}
           paths:
