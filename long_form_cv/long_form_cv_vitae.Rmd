@@ -51,8 +51,7 @@ all_data[['publications']] <- get_publications(params$googlescholarid) %>%
          first_author = case_when(
            str_starts(author, "TM Tapera") ~ TRUE, TRUE ~ FALSE
            ),
-         preprint = case_when(
-           str_detect(journal, "Rxiv") ~ TRUE, TRUE ~ FALSE)
+         preprint = case_when(str_detect(journal, "Rxiv") ~ TRUE, TRUE ~ FALSE)
          ) %>% 
   dplyr::arrange(desc(year))
 
