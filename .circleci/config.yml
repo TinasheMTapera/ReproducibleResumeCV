@@ -17,7 +17,7 @@ jobs:
             export DEBIAN_FRONTEND=noninteractive; apt-get -y update && apt-get install -y git-core
             mkdir -p ~/R/Library
             Rscript -e 'install.packages(c("remotes", "devtools"))'
-            install2.r dplyr forcats ggplot2 glue googlesheets4 here purrr readr remotes shiny stringr tibble tidyr tidyverse todor gargle pagedown bib2df
+            install2.r dplyr forcats ggplot2 glue googlesheets4 here purrr readr remotes shiny stringr tibble tidyr tidyverse todor gargle pagedown bib2df vitae
             Rscript -e 'devtools::install_github("ropensci/rcrossref@319f34c8e8cbb41c2cb06282e612b870f61b85cd")'
       - run:
           name: Run prep
@@ -40,6 +40,10 @@ jobs:
       #     command: R CMD check --as-cran --no-manual *tar.gz
       - store_artifacts:
           path: ReproducibleResumeCV.Rcheck/
+      - store_artifacts:
+          path: /root/project/one_page_resume/tinashemtapera_resume.html
+      - store_artifacts:
+          path: /root/project/long_form_cv/tinashemtapera_cv.html
       - save_cache:
           key: r-pkg-cache-{{ arch }}-{{ .Branch }}
           paths:
