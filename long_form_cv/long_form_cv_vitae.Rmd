@@ -15,6 +15,8 @@ headcolor: "000000"
 aboutme: "I'm an aspiring graduate student seeking PhD opportunities at the intersection of passive sensing, mental health, and data science."
 output: 
   vitae::awesomecv
+params:
+  googlescholarid: 9N6a5jsAAAAJ
 ---
 <!-- major acknowledgement to https://github.com/seabbs/cv -->
 
@@ -29,24 +31,18 @@ library(lubridate)
 library(scholar)
 library(rcrossref)
 library(fs)
+
+source(here::here('helper_functions.R'))
 ```
 
 ```{r get data, include=FALSE}
-
-read_subsheet <- function(subsh){
-  
-  sh <- Sys.getenv("cv_info")
-  read_sheet(sh, sheet = subsh)
-  
-}
-  
-fields <- c("jobs", "education", "untracked_pubs", "teaching", "service", "research", "software_n_projects", "skills")
+  fields <- c("jobs", "education", "untracked_pubs", "teaching", "service", "research", "software_n_projects", "skills")
 
 all_data <- fields %>%
   map(~read_subsheet(.)) %>%
   set_names(fields)
 
-all_data[['publications']] <- get_publications("9N6a5jsAAAAJ") %>% 
+all_data[['publications']] <- get_publications(params$googlescholarid) %>% 
   mutate(author = author %>% 
            as.character %>%
            str_trim(),
@@ -55,8 +51,7 @@ all_data[['publications']] <- get_publications("9N6a5jsAAAAJ") %>%
          first_author = case_when(
            str_starts(author, "TM Tapera") ~ TRUE, TRUE ~ FALSE
            ),
-         preprint = case_when(
-           str_detect(journal, "Rxiv") ~ TRUE, TRUE ~ FALSE)
+         preprint = case_when(str_detect(journal, "Rxiv") ~ TRUE, TRUE ~ FALSE)
          ) %>% 
   dplyr::arrange(desc(year))
 
