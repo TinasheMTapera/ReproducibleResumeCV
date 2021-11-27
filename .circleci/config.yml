@@ -24,7 +24,7 @@ jobs:
           name: Run prep
           command: |
             echo RUNNING PREP SCRIPTS
-            cd project
+            cd /root/project
             Rscript run.R
             
       - run:
