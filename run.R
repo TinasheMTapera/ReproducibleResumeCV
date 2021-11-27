@@ -4,6 +4,7 @@
 # this file renders both the resume and CV in PDF and HTML format
 
 # render one page resume
+here::here("/root/project/")
 rmarkdown::render(input = here::here("one_page_resume", "one_page_resume_pagedown.Rmd"),
                   output_file = "tinashemtapera_cv.html",
                   output_options = list(
