@@ -30,7 +30,7 @@ rmarkdown::render(input = here::here("one_page_resume", "one_page_resume_pagedow
 
 # render long form cv
 rmarkdown::render(input = here::here("long_form_cv", "long_form_cv_vitae.Rmd"),
-                  output_file = "tinashemtapera_cv.html",
+                  output_file = "tinashemtapera_cv.pdf",
                   params = list(
                     googlescholarid = "9N6a5jsAAAAJ"
                   )
