@@ -34,6 +34,13 @@ jobs:
         run: Rscript -e 'rmarkdown::render("long_form_cv/long_form_cv_vitae.Rmd")'
       - name: Render resume
         run: Rscript -e 'rmarkdown::render("one_page_resume/one_page_resume_pagedown.Rmd")'
+      
+      - name: setup git config
+        run: |
+          # setup the username and email. I tend to use 'GitHub Actions Bot' with no email by default
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          
       - name: Update github.io site and commit results
         run: |
           cp one_page_resume/one_page_resume_pagedown.html . && mv one_page_resume_pagedown.html index.html
@@ -43,13 +50,3 @@ jobs:
           git commit -m 'Re-built my-document' || echo "No changes to commit"
           git push origin || echo "No changes to commit"
       
-          
-      ### - name: Render Rmarkdown files and Commit Results
-      #   run: |
-      #     RMD_PATH=($(git diff --name-only ${{ github.event.before }} ${{ github.sha }} | grep '[.]Rmd$'))
-      #     Rscript -e 'for (f in commandArgs(TRUE)) if (file.exists(f)) rmarkdown::render(f, output_format="all")' ${RMD_PATH[*]}
-      #     git config --local user.name "$GITHUB_ACTOR"
-      #     git config --local user.email "$GITHUB_ACTOR@users.noreply.github.com"
-      #     git commit ${RMD_PATH[*]/.Rmd/.md/.pdf/html} -m 'Re-build Rmarkdown files' || echo "No changes to commit"
-      #     git push origin || echo "No changes to commit"
-      #     cp one_page_resume/*.html ./index.html
