@@ -29,7 +29,7 @@ library(tidyverse)
 library(glue)
 library(lubridate)
 library(scholar)
-library(rcrossref)
+#library(rcrossref)
 library(fs)
 
 source(here::here('helper_functions.R'))

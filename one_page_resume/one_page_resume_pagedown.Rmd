@@ -24,7 +24,7 @@ library(tidyverse)
 library(googlesheets4)
 library(glue)
 library(here)
-library(rcrossref)
+#library(rcrossref)
 
 source(here::here('helper_functions.R'))
   
