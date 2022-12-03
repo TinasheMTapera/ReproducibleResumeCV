@@ -4,12 +4,13 @@ author: Tinashe M. Tapera
 date: "`r Sys.Date()`"
 output:
   pagedown::html_resume:
-    # css: ['css/custom_resume.css', 'css/styles_html.css', 'resume']
-    css: ['css/custom_resume.css', 'css/styles_pdf.css', 'resume']
+    css: ['css/custom_resume.css', 'css/styles_html.css', 'resume']
+    # css: ['css/custom_resume.css', 'css/styles_pdf.css', 'resume']
     # set it to true for a self-contained HTML page but it'll take longer to render
     self_contained: true
 params:
-  doctype: "PDF" # "PDF" or "HTML" is automatically updated in update_resume.R 
+  googlescholarid: 9N6a5jsAAAAJ
+  doctype: "HTML" # "PDF" or "HTML" 
 
 ---
 
@@ -27,21 +28,47 @@ library(stringr)
 library(googlesheets4)
 library(glue)
 library(here)
+library(scholar)
 
-source(here::here('helper_functions.R'))
+read_subsheet <- function(subsh, sh="https://docs.google.com/spreadsheets/d/1yLCNgRFi0AezvyTT2Uaof2FKzNImuy2_xIlGKn77TNw/edit?usp=sharing"){
   
-fields <- c("jobs", "education", "software_n_projects", "skills", "untracked_pubs")
+  read_sheet(sh, sheet = subsh)
+  
+}
+
+gs4_deauth()
+
+scholarid <- params$googlescholarid
+fields <- c("jobs", "education", "software_n_projects", "skills")
 
 all_data <- fields %>%
   map(~read_subsheet(.)) %>%
   set_names(fields)
+
+all_data[['publications']] <- get_publications(scholarid) %>% 
+  mutate(author = author %>% 
+           as.character %>%
+           str_trim(),
+         journal = journal %>% 
+           replace(journal %in% "bioRxiv", "BioRxiv"), 
+         first_author = case_when(
+           str_starts(author, "TM Tapera") ~ TRUE, TRUE ~ FALSE
+           ),
+         preprint = case_when(
+           str_detect(journal, "Rxiv") ~ TRUE, TRUE ~ FALSE)
+         ) %>% 
+  dplyr::arrange(desc(year)) %>%
+  mutate(authors = map(pubid, ~ get_publication_data_extended(scholarid, .x))) %>%
+  unnest(authors) %>%
+  rename(authors = Authors)
+
 
 ```
 
 Aside
 ================================================================================
 
-<img src="avatar.png" alt="Author Image" class="img-circle text-center headshot">
+<img src="DSC_0526.JPG" alt="Author Image" class="img-circle text-center headshot">
 <!--![Tinashe M. Tapera](avatar.png){width=50% class="center"}-->
 
 Contact {#contact}
@@ -75,10 +102,10 @@ if(params$doctype == "PDF") {
 
 
 
-```{r download}
+```{r download, eval=FALSE}
 # if doctype is html add link to download a pdf version
 if(params$doctype == "HTML"){
-  cat("[<i class='fas fa-download'></i> Download as a PDF](https://github.com/TinasheMTapera/ReproducibleResumeCV/blob/main/markdown_cv/markdown_cv.pdf)")
+  cat("[<i class='fas fa-download'></i> Download as a PDF](https://github.com/TinasheMTapera/ReproducibleResumeCV/blob/main/one_page_resume/one_page_resume_pagedown.pdf)")
 }
 ```
 
@@ -109,7 +136,7 @@ Source code: [**Github repo**](https://github.com/tinashemtapera/ReproducibleRes
 
 This resume was automatically generated with Continuous Integration
 
-[![CircleCI](https://circleci.com/gh/TinasheMTapera/ReproducibleResumeCV/tree/main.svg?style=svg)](https://circleci.com/gh/TinasheMTapera/ReproducibleResumeCV/tree/main)
+[![GithubActions](https://github.com/TinasheMTapera/ReproducibleResumeCV/actions/workflows/render-rmarkdown.yaml/badge.svg)](https://github.com/TinasheMTapera/ReproducibleResumeCV/actions/workflows/render-rmarkdown.yaml)
 
 Last updated `r format(Sys.time(), '%d %B %Y')`
 <br>
@@ -124,12 +151,12 @@ Tinashe Michael Tapera {#title}
 --------------------------------------------------------------------------------
 
 
-### Aspiring Graduate Student  |  Neuroimaging Data Analyst  
+### Personal Health Informatics PhD Student  |  Data Scientist
 
 
 --------------------------------------------------------------------------------
 
-Data Scientist with a focus on quantitative data analysis and computational techniques for psychology and neuroscience research. **My mission is to study behavioral and mental health** using **statistical and machine learning** applied to data collected from **wearable and mobile devices**. Proficient R and Python programmer, with significant professional and research experience in the domains of neuroimaging, clinical/behavioral psychology, and people analytics/IO psychology.
+I’m a PhD Student at Northeastern University, co-mentored by Varun Mishra and Stephen Intille. I study how to detect mental health states from personal devices like mobile phones and smart watches.
 
 
 --------------------------------------------------------------------------------
@@ -141,6 +168,7 @@ Education {data-icon=graduation-cap}
 all_data[['education']] %>%
   fill(degree, uni, loc, start_date, end_date) %>%
   nest(data = details) %>%
+  slice(1:3) %>%
   # mutate(detail_no = row_number()) %>%
   # pivot_wider(names_from = detail_no, values_from = details) %>%
   mutate(timeline = ifelse(
@@ -148,6 +176,7 @@ all_data[['education']] %>%
         end,
         glue('{format(end_date, "%b %Y")} - {format(start_date, "%b %Y")}')
       )) %>%
+  
   glue_data(
     "### {uni}",
     "\n\n",
@@ -169,6 +198,8 @@ Professional Experience {data-icon=suitcase}
 ```{r jobs}
 # print_section(position_data, 'work')
 all_data[['jobs']] %>%
+  slice(2:n()) %>%
+  slice(-n()) %>%
   fill(-tasks) %>%
   mutate(timeline = ifelse(
         is.na(end_date) | start_date == end_date,
@@ -199,35 +230,26 @@ Selected Publications {data-icon=book data-concise=true}
 --------------------------------------------------------------------------------
 
 ```{r pubs, warning=FALSE}
-pubs_as_bibs <- all_data %>%
-  pluck("untracked_pubs") %>%
-  mutate(bib_text = cr_cn(doi, format = "bibtex"))
-
-pubs_df <- bib2df::bib2df(here("data", "allrefs.bib"), TRUE) %>%
-  select(TITLE, YEAR, AUTHOR, JOURNAL, URL) %>%
-  mutate(across(!c(AUTHOR, YEAR), ~ str_replace_all(.x, "\\{|\\}", ""))) %>% 
-  mutate(AUTHOR = map(AUTHOR, ~parse_csl_entry(.x))) %>%
-  unnest(AUTHOR) %>%
-  bind_cols(pubs_as_bibs) %>%
-  mutate(JOURNAL = ifelse(preprint == TRUE, "Under Review", JOURNAL))
+pubs_df <- all_data %>%
+  pluck("publications")
 
 first <- pubs_df %>%
-  filter(str_detect(TITLE, "FlywheelTools"))
+  filter(str_detect(title, "FlywheelTools"))
 
 pubs_df %>%
-  filter(!str_detect(TITLE, "FlywheelTools")) %>%
+  filter(!str_detect(title, "FlywheelTools")) %>%
   filter(!preprint) %>%
-  arrange(desc(YEAR)) %>%
+  arrange(desc(year)) %>%
   slice(1:3) %>%
   bind_rows(first, .) %>%
   mutate(authorship = c("First Author", "Middle Author", "", "")) %>%
-  mutate(linked_title = glue("[{TITLE}]({URL})")) %>%
+  #mutate(linked_title = glue("[{title}]({journal})")) %>%
   glue_data(
-    "### {linked_title}",
+    "### {title}",
     "\n\n",
-    "{JOURNAL}",
+    "{journal}",
     "\n\n",
-    "{YEAR}",
+    "{year}",
     "\n\n",
     "{authorship}",
     "\n\n\n"
