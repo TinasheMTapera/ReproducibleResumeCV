@@ -2,8 +2,8 @@
 title: CV
 name: Tinashe Michael
 surname: Tapera
-position: "Senior Neuroimaging Data Analyst"
-address: "Philadelphia, Pennsylvania"
+position: "PhD Student in Personal Health Informatics"
+address: "Northeastern University, Boston, MA"
 phone: +267 441 7206
 www: tinashemtapera.com
 email: "tinashemtapera@gmail.com"
@@ -12,7 +12,7 @@ github: TinasheMTapera
 linkedin: TinasheMTapera
 date: "`r format(Sys.time(), '%B %Y')`"
 headcolor: "000000"
-aboutme: "I'm an aspiring graduate student seeking PhD opportunities at the intersection of passive sensing, mental health, and data science."
+aboutme: "I’m a PhD Student at Northeastern University, co-mentored by Varun Mishra and Stephen Intille. I study how to detect and intervene on mental health crises from personal devices like mobile phones and smart watches."
 output: 
   vitae::awesomecv
 params:
@@ -33,16 +33,28 @@ library(rcrossref)
 library(fs)
 
 source(here::here('helper_functions.R'))
+scholarid <- params$googlescholarid
 ```
 
 ```{r get data, include=FALSE}
-  fields <- c("jobs", "education", "untracked_pubs", "teaching", "service", "research", "software_n_projects", "skills")
+#### read in your google sheets data for things like:
+#### jobs, projects, research, zenodo dois, skills
+read_subsheet <- function(subsh, sh="https://docs.google.com/spreadsheets/d/1yLCNgRFi0AezvyTT2Uaof2FKzNImuy2_xIlGKn77TNw/edit?usp=sharing"){
+  
+  read_sheet(sh, sheet = subsh)
+  
+}
+  
+fields <- c("jobs", "education", "teaching", "service", "research", "software_n_projects", "skills")
+
+gs4_deauth()
 
 all_data <- fields %>%
   map(~read_subsheet(.)) %>%
   set_names(fields)
 
-all_data[['publications']] <- get_publications(params$googlescholarid) %>% 
+### add your publications from google scholar
+all_data[['publications']] <- get_publications(scholarid) %>% 
   mutate(author = author %>% 
            as.character %>%
            str_trim(),
@@ -51,90 +63,15 @@ all_data[['publications']] <- get_publications(params$googlescholarid) %>%
          first_author = case_when(
            str_starts(author, "TM Tapera") ~ TRUE, TRUE ~ FALSE
            ),
-         preprint = case_when(str_detect(journal, "Rxiv") ~ TRUE, TRUE ~ FALSE)
+         preprint = case_when(
+           str_detect(journal, "Rxiv") ~ TRUE, TRUE ~ FALSE)
          ) %>% 
-  dplyr::arrange(desc(year))
+  dplyr::arrange(desc(year)) %>%
+  mutate(authors = map(pubid, ~ get_publication_data_extended(scholarid, .x))) %>%
+  unnest(authors) %>%
+  rename(authors = Authors)
 
-```
 
-```{r get pubs from doi}
-pubs_as_bibs <- all_data %>%
-  pluck("untracked_pubs") %>%
-  mutate(bib_text = cr_cn(doi, format = "bibtex"))
-
-if(!fs::dir_exists(here("data"))){
-  
-  fs::dir_create(here("data"))
-}
-
-#write to a permanent personal ref.bib
-write_lines(pubs_as_bibs$bib_text, here("data", "allrefs.bib"))
-
-parse_csl_entry <- function(entry, max_len = 6, min_length = 4){
-  # these entries come out in a funny format; parse them into a single character vector
-  
-  entry %>%
-    mutate(first_initial = str_c(str_sub(first_name, 1,1), ".")) %>%
-    mutate(to_return = glue("{last_name}, {first_initial} {middle_name}", .na = "")) %>%
-    pull(to_return) %>%
-    str_trim() -> full_list
-  
-  # a bit of logic to shorten long entries
-  if(length(full_list) >= max_len){
-    index <- str_which(full_list, "Tapera")
-    if(index < min_length){
-      full_list <- c(full_list[1:min_length], "...", full_list[length(full_list)])
-    } else{
-      full_list <- c(full_list[1:index], "...", full_list[length(full_list)])
-    }
-  }
-  str_flatten(full_list, collapse = ", ")
-  
-}
-
-pubs_df <- bib2df::bib2df(here("data", "allrefs.bib"), TRUE) %>%
-  select(TITLE, YEAR, AUTHOR, JOURNAL, URL) %>%
-  mutate(across(!c(AUTHOR, YEAR), ~ str_replace_all(.x, "\\{|\\}", ""))) %>% 
-  mutate(AUTHOR = map(AUTHOR, ~parse_csl_entry(.x))) %>%
-  unnest(AUTHOR) %>%
-  bind_cols(pubs_as_bibs) %>%
-  mutate(JOURNAL = ifelse(preprint == TRUE, "Under Review", JOURNAL))
-
-```
-
-```{r warn pubs missing}
-gschol_papers <- all_data %>%
-  pluck("publications") %>%
-  pull(title) %>%
-  str_trim() %>%
-  str_to_lower()
-
-pubs_papers <- pubs_df %>%
-  pull(TITLE) %>%
-  str_to_lower()
-
-contained <- function(sublist, superlist){
-  
-  missing <- c()
-  
-  while(length(sublist) > 0){
-    
-    if(!(sublist[1] %in% superlist)){
-      missing <- c(sublist[1], missing)
-    }
-    
-    sublist <- sublist[-1]
-    
-  }
-  
-  return(missing)
-  
-}
-
-not_in_sheet <- contained(gschol_papers, pubs_papers)
-
-message("The following papers were found on scholar but NOT in your DOIs:\n")
-message(paste0(not_in_sheet, collapse="\n\n"))
 ```
 
 # Education 
@@ -150,6 +87,7 @@ all_data %>%
         )
       )
     ) %>%
+  mutate(end_date = replace_na(end_date, "Present")) %>%
   detailed_entries(
     when = glue("{start_date} — {end_date}"),
     what = degree,
@@ -203,37 +141,69 @@ all_data %>%
   )
 ```
 
+```{r, include=FALSE}
+parse_authors <- function(entry, max_len = 5, min_length = 4){
+  # these entries come out in a funny format; parse them into a single character vector
+  
+  entry %>%
+    str_split(",") %>%
+    unlist() %>%
+    tibble(original = .) %>%
+    mutate(original = str_squish(original),
+           initials = original %>%
+             str_extract(".+?(?=\\s)"),
+           last_name = original %>%
+             str_extract("(?<=\\s).*")) %>%
+    mutate(to_return = glue("{last_name}, {initials}", .na = "")) %>%
+    filter(to_return != ", ") %>%
+    pull(to_return) -> authors
+  
+  # a bit of logic to shorten long entries
+  # if(length(authors) >= max_len){
+  #   index <- str_which(authors, "Tapera")
+  #   if(index < min_length){
+  #     authors <- c(authors[1:min_length], "...")
+  #   } else{
+  #     authors <- c(authors[1:index], "...")
+  #   }
+  # }
+  str_flatten(authors, collapse = ", ")
+  
+}
+
+```
 
 # Publications
 
 *First-author*
 
 ```{r first author}
-pubs_df %>%
-  filter(str_starts(AUTHOR, "Tapera")) %>%
-  arrange(desc(YEAR)) %>%
+all_data[['publications']] %>%
+  filter(str_starts(author, "TM Tapera")) %>%
+  arrange(desc(year)) %>%
+  #mutate(author = parse_author(author))
   detailed_entries(
-    what=AUTHOR, 
-    when=YEAR, 
-    with=TITLE, 
-    where=JOURNAL,
-    why = URL,
+    what=author, 
+    when=year, 
+    with=title, 
+    where=journal,
     .protect = TRUE
   )
+
 
 ```
 
 *Middle-author*
 ```{r mid author}
-pubs_df %>%  
-  filter(!str_starts(AUTHOR, "Tapera")) %>%
-  arrange(desc(YEAR)) %>%
+all_data[['publications']] %>% 
+  filter(!str_starts(author, "TM Tapera")) %>%
+  filter(!is.na(year)) %>%
+  arrange(desc(year)) %>%
   detailed_entries(
-    what=AUTHOR, 
-    when=YEAR, 
-    with=TITLE, 
-    where=JOURNAL,
-    why = URL,
+    what=author, 
+    when=year, 
+    with=title, 
+    where=journal,
     .protect = TRUE
   )
 
