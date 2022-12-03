@@ -102,6 +102,7 @@ all_data %>%
 
 # Professional Experience
 
+
 ```{r jobs}
 all_data %>%
   pluck("jobs") %>%
