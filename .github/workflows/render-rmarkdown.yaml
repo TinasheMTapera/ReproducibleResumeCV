@@ -19,7 +19,7 @@ jobs:
       
       - name: prereqs
         run: |
-          export DEBIAN_FRONTEND=noninteractive; apt-get -y update && apt-get install -y git-core libcurl4-openssl-dev
+          sudo apt-get -y update && apt-get install -y git-core libcurl4-openssl-dev
 
       - uses: r-lib/actions/setup-pandoc@v2
 
