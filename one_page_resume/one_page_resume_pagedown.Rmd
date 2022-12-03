@@ -20,13 +20,11 @@ knitr::opts_chunk$set(
 )
 
 #load packages
-library(dplyr)
-library(purrr)
-library(tidyr)
-library(stringr)
+library(tidyverse)
 library(googlesheets4)
 library(glue)
 library(here)
+#library(rcrossref)
 
 source(here::here('helper_functions.R'))
   
