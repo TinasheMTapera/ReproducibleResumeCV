@@ -22,6 +22,7 @@ params:
 <!-- major acknowledgement to https://github.com/seabbs/cv -->
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 library(vitae)
 library(googlesheets4)
@@ -35,7 +36,6 @@ library(purrr)
 library(tidyr)
 library(stringr)
 
-#source(here::here('helper_functions.R'))
 scholarid <- params$googlescholarid
 ```
 
