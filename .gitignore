@@ -196,3 +196,4 @@ po/*~
 # End of https://www.toptal.com/developers/gitignore/api/r,python
 .Rproj.user
 .DS_Store
+*.key
