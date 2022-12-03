@@ -2,7 +2,7 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    paths: ['**.Rmd', "renv.lock"]
+    branches: ["main"]
 
 name: render-rmarkdown
 
@@ -36,7 +36,7 @@ jobs:
         run: Rscript -e 'rmarkdown::render("one_page_resume/one_page_resume_pagedown.Rmd")'
       - name: Update github.io site and commit results
         run: |
-          cp one_page_resume/one_page_resume_pagedown . && mv one_page_resume_pagedown.html index.html
+          cp one_page_resume/one_page_resume_pagedown.html . && mv one_page_resume_pagedown.html index.html
           git add long_form_cv/long_form_cv_vitae*
           git add one_page_resume/one_page_resume_pagedown*
           git add index.html
