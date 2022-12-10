@@ -48,5 +48,5 @@ jobs:
           git add one_page_resume/one_page_resume_pagedown*
           git add index.html
           git commit -m 'Re-built my-document' || echo "No changes to commit"
-          git push origin || echo "No changes to commit"
+          git push -f origin || echo "No changes to commit"
       
