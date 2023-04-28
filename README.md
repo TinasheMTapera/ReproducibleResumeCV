@@ -19,4 +19,4 @@ Major Credits:
 -   Github “Most Used Languages” widget:
     [anuraghazra/github-readme-stats](https://github.com/anuraghazra/github-readme-stats)
 
-Accompanying blog post: https://tinashemtapera.com/blog/2022-03-12-automated-cv-resume-with-r-circleci-google-sheets/
+Accompanying blog post: https://tinashemtapera.com/posts/listing-legacy/2022-03-12-automated-cv-resume-with-r-circleci-google-sheets/
