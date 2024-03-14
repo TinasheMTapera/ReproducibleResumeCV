@@ -12,7 +12,7 @@ github: TinasheMTapera
 linkedin: TinasheMTapera
 date: "`r format(Sys.time(), '%B %Y')`"
 headcolor: "000000"
-aboutme: "I’m a PhD Student at Northeastern University, co-mentored by Varun Mishra and Stephen Intille. I study how to detect and intervene on mental health crises from personal devices like mobile phones and smart watches."
+aboutme: "I’m a PhD Student at Northeastern University, co-mentored by Varun Mishra and Stephen Intille. I study how to detect and intervene on mental health states using personal devices like mobile phones and smart watches."
 output: 
   vitae::awesomecv
 params:
