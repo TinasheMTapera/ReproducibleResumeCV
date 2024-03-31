@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 # ReproducibleResumeCV
 
 <!-- badges: start -->
-[![CircleCI](https://circleci.com/gh/TinasheMTapera/ReproducibleResumeCV/tree/main.svg?style=svg)](https://circleci.com/gh/TinasheMTapera/ReproducibleResumeCV/tree/main)
+[![GithubActions](https://github.com/TinasheMTapera/ReproducibleResumeCV/actions/workflows/render-rmarkdown.yaml/badge.svg)](https://github.com/TinasheMTapera/ReproducibleResumeCV/actions/workflows/render-rmarkdown.yaml)
 <!-- badges: end -->
 
 

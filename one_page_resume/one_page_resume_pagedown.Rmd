@@ -212,20 +212,20 @@ all_data[['jobs']] %>%
   group_by(role, company, where, timeline) %>%
   mutate(task_num = paste0("task_", row_number())) %>%
   pivot_wider(names_from = task_num, values_from = tasks) %>%
-  unite(col = bullets, contains("task_"), sep = "\n", na.rm = TRUE) #%>%
+  unite(col = bullets, contains("task_"), sep = "\n", na.rm = TRUE) %>%
   
-  # glue_data(
-  #     "### {role}",
-  #     "\n\n",
-  #     "{company}",
-  #     "\n\n",
-  #     "{where}",
-  #     "\n\n",
-  #     "{timeline}", 
-  #     "\n\n",
-  #     "{bullets}",
-  #     "\n\n\n",
-  #   )
+  glue_data(
+      "### {role}",
+      "\n\n",
+      "{company}",
+      "\n\n",
+      "{where}",
+      "\n\n",
+      "{timeline}", 
+      "\n\n",
+      "{bullets}",
+      "\n\n\n"
+    )
 ```
 
 Selected Publications {data-icon=book data-concise=true}
