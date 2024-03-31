@@ -25,7 +25,3 @@ Major Credits:
 - Long-form CV: [Sam Abbott's CV template](https://github.com/seabbs/cv)
 
 - Github "Most Used Languages" widget: [anuraghazra/github-readme-stats](https://github.com/anuraghazra/github-readme-stats)
-
-The goal of ReproducibleResumeCV is to ...
-
-- [] TODO: automate github fetching of forked work repos
