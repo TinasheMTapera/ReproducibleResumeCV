@@ -153,7 +153,7 @@ Tinashe Michael Tapera {#title}
 --------------------------------------------------------------------------------
 
 
-### Personal Health Informatics PhD Student  |  Data Scientist
+### Personal Health Informatics PhD Student
 
 
 --------------------------------------------------------------------------------
@@ -177,18 +177,18 @@ all_data[['education']] %>%
         is.na(start_date) | start_date == end_date,
         end,
         glue('{format(end_date, "%b %Y")} - {format(start_date, "%b %Y")}')
-      )) %>%print()
+      )) %>%
   
-  # glue_data(
-  #   "### {uni}",
-  #   "\n\n",
-  #   "{degree}",
-  #   "\n\n",
-  #   "{loc}",
-  #   "\n\n",
-  #   '{format(end_date, "%b %Y")}',
-  #   "\n\n",
-  # )
+  glue_data(
+    "### {uni}",
+    "\n\n",
+    "{degree}",
+    "\n\n",
+    "{loc}",
+    "\n\n",
+    '{format(end_date, "%b %Y")}',
+    "\n\n"
+  )
   
 ```
 
@@ -212,20 +212,20 @@ all_data[['jobs']] %>%
   group_by(role, company, where, timeline) %>%
   mutate(task_num = paste0("task_", row_number())) %>%
   pivot_wider(names_from = task_num, values_from = tasks) %>%
-  unite(col = bullets, contains("task_"), sep = "\n", na.rm = TRUE) %>%
+  unite(col = bullets, contains("task_"), sep = "\n", na.rm = TRUE) #%>%
   
-  glue_data(
-      "### {role}",
-      "\n\n",
-      "{company}",
-      "\n\n",
-      "{where}",
-      "\n\n",
-      "{timeline}", 
-      "\n\n",
-      "{bullets}",
-      "\n\n\n",
-    )
+  # glue_data(
+  #     "### {role}",
+  #     "\n\n",
+  #     "{company}",
+  #     "\n\n",
+  #     "{where}",
+  #     "\n\n",
+  #     "{timeline}", 
+  #     "\n\n",
+  #     "{bullets}",
+  #     "\n\n\n",
+  #   )
 ```
 
 Selected Publications {data-icon=book data-concise=true}
