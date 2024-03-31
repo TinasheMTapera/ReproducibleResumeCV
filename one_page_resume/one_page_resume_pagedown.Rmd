@@ -177,18 +177,18 @@ all_data[['education']] %>%
         is.na(start_date) | start_date == end_date,
         end,
         glue('{format(end_date, "%b %Y")} - {format(start_date, "%b %Y")}')
-      )) %>%
+      )) %>%print()
   
-  glue_data(
-    "### {uni}",
-    "\n\n",
-    "{degree}",
-    "\n\n",
-    "{loc}",
-    "\n\n",
-    '{format(end_date, "%b %Y")}',
-    "\n\n",
-  )
+  # glue_data(
+  #   "### {uni}",
+  #   "\n\n",
+  #   "{degree}",
+  #   "\n\n",
+  #   "{loc}",
+  #   "\n\n",
+  #   '{format(end_date, "%b %Y")}',
+  #   "\n\n",
+  # )
   
 ```
 
