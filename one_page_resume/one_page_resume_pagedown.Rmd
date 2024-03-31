@@ -125,8 +125,7 @@ Github Statistics {#stats}
 
 
 ```{r codingskills, dev.args = list(bg = 'transparent')}
-# function from helper_functions.R
-# build_skill_bars(skill_data, "Tech")
+# pass
 ```
 
 
