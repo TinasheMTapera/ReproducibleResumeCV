@@ -8,6 +8,7 @@
 [![GithubActions](https://github.com/TinasheMTapera/ReproducibleResumeCV/actions/workflows/render-rmarkdown.yaml/badge.svg)](https://github.com/TinasheMTapera/ReproducibleResumeCV/actions/workflows/render-rmarkdown.yaml)
 <!-- badges: end -->
 
+
 Major Credits:
 
 - Short-form resume: [Matt Leary’s resume
