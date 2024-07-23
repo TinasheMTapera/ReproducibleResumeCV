@@ -79,7 +79,7 @@ Contact {#contact}
 # Adjust contact info based on document type - html has link while pdf does not
 if(params$doctype == "HTML") {
   glue::glue('
-    - <i class="fa fa-map-marked-alt"></i> Philadelphia, PA
+    - <i class="fa fa-map-marked-alt"></i> Boston, MA, USA
     - <i class="fa fa-phone"></i> <a href="tel:267-441-7206">(267) 441-7206</a>
     - <i class="fa fa-envelope"></i> tinashemtapera\\@gmail.com
     - <i class="fa fa-globe"></i> [tinashemtapera.com](https://www.tinashemtapera.com)
