@@ -19,7 +19,7 @@ jobs:
       
       - name: prereqs
         run: |
-          sudo apt-get -y update && sudo apt-get install -y git-core libcurl4-openssl-dev libfontconfig1-dev gfortan-7 libblas-dev liblapack-dev
+          sudo apt-get -y update && sudo apt-get install -y git-core libcurl4-openssl-dev libfontconfig1-dev gfortan libblas-dev liblapack-dev
 
       - uses: r-lib/actions/setup-pandoc@v2
 
