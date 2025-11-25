@@ -2,8 +2,8 @@
 title: CV
 name: Tinashe Michael
 surname: Tapera
-position: "PhD Student in Personal Health Informatics"
-address: "Northeastern University, Boston, MA"
+position: "Research Software Engineer at Harvard University"
+address: "Harvard University, Boston, MA"
 phone: +267 441 7206
 www: tinashemtapera.com
 email: "tinashemtapera@gmail.com"
