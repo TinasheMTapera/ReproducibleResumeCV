@@ -12,7 +12,7 @@ github: TinasheMTapera
 linkedin: TinasheMTapera
 date: "`r format(Sys.time(), '%B %Y')`"
 headcolor: "000000"
-aboutme: "I’m a Research Software Engineer at Harvard University in the Golden Planetary Health Lab and National Studies on Air Pollution & Health (NSAPH). I write software that makes science happen by developing high-throughput ETL data pipelines, distributing accessible software packages, and providing documentation and support for best practices in data science at Harvard."
+aboutme: "I’m a Research Software Engineer at Harvard University in the Golden Planetary Health Lab and National Studies on Air Pollution & Health (NSAPH). I write software that makes science happen by developing high-throughput ETL data pipelines, distributing accessible research software packages, and providing documentation and support for best practices in data science at Harvard."
 output: 
   vitae::awesomecv
 params:
@@ -123,6 +123,8 @@ all_data %>%
     where = where,
     why = tasks)
 ```
+
+\pagebreak
 
 # Research Experience
 
